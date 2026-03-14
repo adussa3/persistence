@@ -1,0 +1,42 @@
+Persistence
+-----------
+Persistence
+  - In LangGraph, persistence means that we can persist our state after the nodes execute at any given time in
+    a persistent storage that is retrievable, so we can retrieve it after multiple executions or interruptions
+
+  - This is important because it facitlitates human-in-the-loop workflows which is useful in user-facing applications
+    where we get input from the user (there might be a node that's dependant un the user's input)
+
+  - LangGraph offers us a very convenient way to stop the execution of the graph and the LangGraph framework
+    "checkpoints" the state in persistent storage
+
+    - So now we can get the user input and RESUME the graph execution from the point we left with the user input
+  
+  - Why is memory and persistence super important? They enable us for debugging, history tracing, and maintain multiple
+    sessions for a user
+
+How to add persistence in LangGraph
+-----------------------------------
+Checkpointer
+  - We can add persistence to our LangGraph graph using the "Checkpointer" objects
+  - This is a persistence layer that LangGraph implements for us
+  - The checkpointer saves the graph's state in a persistent storage that we define!
+    - NOTE: LangChain has many integrations to databases:
+      (1) Document databases: Firestore, MongoDB
+      (2) Relational databases: Postgres, SQLite, MySQL
+      (3) Graph databases: Neo4j, AWS, Neptune
+    - The database can be local or remote
+
+#######################
+# EXAMPLE WITH SQLITE #
+#######################
+
+# When we create a graph with a checkpointer, LangGraph, under the hood, persists our state after EACH node execution!
+#
+# After each node executes, we'll have a new state which LangGraph persists/stores in our database which we can access and retrieve later
+# This gives us the option to stop the graph execution and get the user input, then continue exactly where we left off by retrieving the state from the database
+
+from langgraph.checkpoint.sqlite import SqliteSaver
+
+memory = SqliteSaver.from_conn_string(":checkpoints.sqlite:")
+graph = workflow.compile(checkpointer=memory)

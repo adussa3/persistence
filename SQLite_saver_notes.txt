@@ -1,0 +1,3 @@
+Instead of using memory saver, which is empemeral, in-memory, and loses the information after each run of the program
+
+We'll use SQLite Saver which persists our state in storage and into an SQLite database
